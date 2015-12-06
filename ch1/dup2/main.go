@@ -17,7 +17,7 @@ import (
 func main() {
 	counts := make(map[string]int)
 	lineFileMap := make(map[string]map[string]int)
-	
+
 	files := os.Args[1:]
 	if len(files) == 0 {
 		countLines(os.Stdin, counts, lineFileMap)
@@ -46,7 +46,7 @@ func countLines(f *os.File, counts map[string]int, lineFileMap map[string]map[st
 	input := bufio.NewScanner(f)
 	for input.Scan() {
 		counts[input.Text()]++
-		if (lineFileMap[input.Text()] == nil) {
+		if lineFileMap[input.Text()] == nil {
 			lineFileMap[input.Text()] = make(map[string]int)
 		}
 		lineFileMap[input.Text()][f.Name()]++

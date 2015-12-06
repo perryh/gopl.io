@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	fmt.Println("Program name: " + os.Args[0])
 	var s, sep string
 	for i := 1; i < len(os.Args); i++ {
 		s += sep + os.Args[i]

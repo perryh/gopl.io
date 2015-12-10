@@ -7,14 +7,16 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/gif"
-	"io"
 	"log"
 	"math"
 	"math/rand"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 var palette = []color.Color{color.White, color.Black}
@@ -25,21 +27,33 @@ const (
 )
 
 func main() {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		lissajous(w)
-	}
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", lissajous)
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
 
-func lissajous(out io.Writer) {
+func handler(out http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		os.Exit(1)
+	}
+	fmt.Printf("Form size: %d\n", len(r.Form))
+}
+
+func lissajous(out http.ResponseWriter, r *http.Request) {
 	const (
-		cycles  = 5     // number of complete x oscillator revolutions
 		res     = 0.001 // angular resolution
-		size    = 100   // image canvas covers [-size..+size]
+		size    = 500   // image canvas covers [-size..+size]
 		nframes = 64    // number of animation frames
 		delay   = 8     // delay between frames in 10ms units
 	)
+	if err := r.ParseForm(); err != nil {
+		os.Exit(1)
+	}
+	for k, v := range r.Form {
+		fmt.Printf("%s:%s\n", k, v)
+	}
+	cyclesInt, _ := strconv.Atoi(r.Form.Get("cycles")) // number of complete x oscillator revolutions
+	cycles := float64(cyclesInt)
+	fmt.Printf("Float is: %f\n", cycles)
 	freq := rand.Float64() * 3.0 // relative frequency of y oscillator
 	anim := gif.GIF{LoopCount: nframes}
 	phase := 0.0 // phase difference
